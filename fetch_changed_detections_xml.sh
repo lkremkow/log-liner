@@ -54,6 +54,6 @@ date -u +%Y-%m-%dT%H:%M:%SZ > last_checked_new.dat
 echo
 echo contacting Qualys to get detection data for changed vulnerabilities
 echo
-curl --silent --show-error -H "X-Requested-With: log-liner" -u "$FOUSER:$FOPASS" "https://$SOCURL/api/2.0/fo/asset/host/vm/detection/?action=list&show_results=0&show_reopened_info=0&output_format=XML&truncation_limit=3&severities=1-5&status=New,Re-Opened,Fixed&detection_updated_since=$LASTCHECK" -o $QUALYSAPIOUTPUT
+curl --silent --show-error -H "X-Requested-With: log-liner" -u "$FOUSER:$FOPASS" "https://$SOCURL/api/2.0/fo/asset/host/vm/detection/?action=list&show_results=0&show_reopened_info=0&output_format=XML&truncation_limit=1000&severities=1-5&status=New,Re-Opened,Fixed&detection_updated_since=$LASTCHECK" -o $QUALYSAPIOUTPUT
 
 echo done getting detection data for changed vulnerabilities
