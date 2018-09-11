@@ -1,0 +1,64 @@
+input {
+  file {
+    path => "/var/log/qualys_detections_active.log"
+    mode => "tail"
+    sincedb_path => "/tmp/qualys_detections_active.sincedb"
+    type => "qualys-vm-active"
+  }
+
+  file {
+    path => "/var/log/qualys_detections_changed.log"
+    mode => "tail"
+    sincedb_path => "/tmp/qualys_detections_changed.sincedb"
+    type => "qualys-vm-changed"
+  }
+
+  file {
+    path => "/var/log/qualys_tickets.log"
+    mode => "tail"
+    sincedb_path => "/tmp/qualys_tickets.sincedb"
+    type => "qualys-vm-tickets"
+  }
+
+  file {
+    path => "/var/log/qualys_was_detections.log"
+    mode => "tail"
+    sincedb_path => "/tmp/qualys_was_detections.sincedb"
+    type => "qualys-was-detections"
+  }
+
+}
+
+filter {
+
+  if [type] == "qualys-vm-active" or [type] == "qualys-vm-changed" {
+    grok {
+      match => { "message" => "%{IP:target_host},%{NUMBER:qid},%{WORD:vuln_type},%{NUMBER:severity},%{WORD:vuln_status},%{TIMESTAMP_ISO8601:last_seen}" }
+    }
+    date {
+      match => [ "last_seen", "ISO8601" ]
+    }
+  } else if [type] =~ "qualys-vm-tickets" {
+    grok {
+      match => { "message" => "%{NUMBER:ticket_id},%{WORD:ticket_status},%{DATA:user_email},%{IP:target_host},%{NUMBER:qid},%{WORD:vuln_type},%{NUMBER:severity}" }
+    }
+
+  } else if [type] =~ "qualys-was-detections" {
+    grok {
+      match => { "message" => "%{DATA:target_host},%{DATA:vuln_location},%{NUMBER:qid},%{TIMESTAMP_ISO8601:last_seen}" }
+    }
+    date {
+      match => [ "last_seen", "ISO8601" ]
+    }
+
+  }
+
+}
+
+output {
+  elasticsearch {
+    hosts => "127.0.0.1:9200"
+    index => "qualys-%{+YYYY.MM.dd}"
+  }
+  stdout { codec => rubydebug }
+}
