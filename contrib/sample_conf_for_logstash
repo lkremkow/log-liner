@@ -33,7 +33,7 @@ filter {
 
   if [type] == "qualys-vm-active" or [type] == "qualys-vm-changed" {
     grok {
-      match => { "message" => "%{IP:target_host},%{NUMBER:qid},%{WORD:vuln_type},%{NUMBER:severity},%{WORD:vuln_status},%{TIMESTAMP_ISO8601:last_seen}" }
+      match => { "message" => "%{IP:target_host},%{NUMBER:qid},%{WORD:vuln_type},%{NUMBER:severity},%{USERNAME:vuln_status},%{TIMESTAMP_ISO8601:last_seen}" }
     }
     date {
       match => [ "last_seen", "ISO8601" ]
