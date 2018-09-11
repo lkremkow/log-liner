@@ -1,0 +1,11 @@
+/var/log/qualys_detections_active.log
+/var/log/qualys_detections_changed.log
+/var/log/qualys_tickets.log
+/var/log/qualys_was_detections.log {
+  rotate 12
+  weekly
+  compress
+  missingok
+  notifempty
+  noolddir
+}
