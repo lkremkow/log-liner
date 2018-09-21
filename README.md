@@ -14,6 +14,7 @@
 
    Tested under:
    - MacOS 10.13.6
+   - Debian GNU/Linux 9 (stretch)
 
 
 ## Installation
